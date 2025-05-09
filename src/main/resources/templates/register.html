@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .register-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+            background: linear-gradient(to right, #ece9e6, #ffffff);
+            padding-top: 60px; /* 헤더와의 간격 */
+            padding-bottom: 60px; /* 푸터와의 간격 */
+        }
+
+        .register-card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        /* 나머지 스타일은 유지 */
+        .register-card h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #343a40;
+            text-align: center;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            height: 45px;
+            border: 1px solid #ced4da;
+            box-shadow: none;
+        }
+
+        .form-control:focus {
+            border-color: #495057;
+            box-shadow: 0 0 0 0.2rem rgba(73, 80, 87, 0.25);
+        }
+
+        .btn-custom {
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 8px;
+            height: 45px;
+            font-weight: 600;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            background-color: #0056b3;
+        }
+
+        /* 성별 라디오 버튼 스타일 */
+        .gender-group {
+            margin-bottom: 25px;
+        }
+
+        .form-check {
+            margin-right: 20px;
+        }
+
+        /* 에러 메시지 스타일 */
+        .alert {
+            margin-bottom: 25px;
+            border-radius: 8px;
+        }
+
+        /* 로그인 링크 스타일 수정 */
+        .login-link {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;  /* 경계선 색상 변경 */
+        }
+
+        .login-link a {
+            color: #0056b3;  /* 링크 색상 변경 */
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            color: #003d7d;  /* 호버 시 색상 변경 */
+            text-decoration: underline;
+        }
+
+        .login-link p {
+            color: #495057;  /* 텍스트 색상 지정 */
+            margin-bottom: 0;
+        }
+    </style>
+    <th:block th:replace="~{include/header::header}"></th:block>
+    <th:block th:replace="~{include/header::preloader}"></th:block>
+    <th:block th:replace="~{include/main_header::main_header}"></th:block>
+</head>
+
+<body>
+
+    <!-- 회원가입 폼 컨테이너 -->
+    <div class="register-container">
+        <div class="register-card">
+            <h3>회원가입</h3>
+
+            <div class="alert alert-danger" th:if="${param.error}">
+                이미 존재하는 아이디입니다.
+            </div>
+
+            <form action="/register" method="post">
+                <div class="mb-3">
+                    <label for="userid" class="form-label">아이디</label>
+                    <input type="text" class="form-control" id="userid" name="userid" required placeholder="아이디를 입력하세요">
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">비밀번호</label>
+                    <input type="password" class="form-control" id="password" name="password" required placeholder="비밀번호를 입력하세요">
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">이메일</label>
+                    <input type="email" class="form-control" id="email" name="email" required placeholder="이메일을 입력하세요">
+                </div>
+                <div class="mb-3">
+                    <label for="name" class="form-label">이름</label>
+                    <input type="text" class="form-control" id="name" name="name" required placeholder="이름을 입력하세요">
+                </div>
+                <div class="mb-3">
+                    <label for="addr" class="form-label">주소</label>
+                    <input type="text" class="form-control" id="addr" name="addr" required placeholder="주소를 입력하세요">
+                </div>
+                <div class="mb-3">
+                    <label for="phone" class="form-label">전화번호</label>
+                    <input type="tel" class="form-control" id="phone" name="phone" required placeholder="전화번호를 입력하세요">
+                </div>
+                <div class="mb-4 gender-group">
+                    <label class="form-label d-block">성별</label>
+                    <div class="d-flex">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="sex" id="male" value="male" required>
+                            <label class="form-check-label" for="male">남성</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="sex" id="female" value="female" required>
+                            <label class="form-check-label" for="female">여성</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-outline-secondary w-100">가입하기</button>
+                
+                <div class="text-center login-link">
+                    <p>이미 계정이 있으신가요? <a href="/login">로그인하기</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <th:block th:replace="~{include/footer::footer}"></th:block>
+    <th:block th:replace="~{include/plugin::plugin}"></th:block>
+</body>
+
+</html>

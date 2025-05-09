@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #ffffff; /* 전체 배경 흰색 */
+            margin: 0;
+            padding: 0;
+        }
+
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80vh;
+            background-color: #f8f9fa; /* 약간 회색 배경 */
+        }
+
+        .login-card {
+            display: flex;
+            width: 800px;
+            background: #ffffff; /* 카드 배경 흰색 */
+            border-radius: 12px;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .login-left, .login-right {
+            flex: 1;
+            padding: 40px;
+        }
+
+        .login-left {
+            background-color: #f8f9fa; /* 왼쪽 섹션 약간 회색 배경 */
+            color: #000000; /* 텍스트 검정 */
+        }
+
+        .login-left h3, .login-right h3 {
+            font-size: 20px;
+            font-weight: bold;
+            color: #000000; /* 텍스트 검정 */
+            margin-bottom: 20px;
+        }
+
+        .login-left p {
+            font-size: 14px;
+            color: #333333; /* 텍스트 회색 */
+            margin-bottom: 20px;
+        }
+
+        .btn-register {
+            display: inline-block;
+            padding: 12px 20px;
+            border: 1px solid #000000; /* 검정 테두리 */
+            border-radius: 8px;
+            color: #000000; /* 검정 텍스트 */
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-register:hover {
+            background-color: #000000; /* 검정 배경 */
+            color: #ffffff; /* 흰색 텍스트 */
+        }
+
+        .login-right {
+            background-color: #ffffff; /* 오른쪽 섹션 카드 배경 */
+            color: #000000; /* 텍스트 검정 */
+        }
+
+        .form-control {
+            border-radius: 8px;
+            height: 45px;
+            border: 1px solid #333333; /* 회색 테두리 */
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #ffffff; /* 흰색 배경 */
+            color: #000000; /* 검정 텍스트 */
+        }
+
+        .form-control:focus {
+            border-color: #000000; /* 검정 테두리 */
+            box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.25);
+        }
+
+        .btn-login {
+            background-color: #000000; /* 검정 버튼 */
+            color: #ffffff; /* 흰색 텍스트 */
+            border-radius: 8px;
+            height: 45px;
+            width: 100%;
+            font-weight: bold;
+            border: none;
+        }
+
+        .btn-login:hover {
+            background-color: #333333; /* 어두운 회색 버튼 */
+        }
+
+        .link-group {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .link-group a {
+            color: #000000; /* 검정 링크 */
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .link-group a:hover {
+            text-decoration: underline;
+            color: #000000;
+
+        }
+
+        .sns-button {
+            margin-top: 20px;
+            width: 100%;
+            height: 45px;
+            background-color: #000000; /* 검정 버튼 */
+            color: #ffffff; /* 흰색 텍스트 */
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .sns-button:hover {
+            background-color: #333333; /* 어두운 회색 버튼 */
+        }
+    </style>
+    <style>
+        .kakao-login-btn {
+            margin-top: 10px;
+            width: 100%;
+            height: 45px;
+            background-color: #FEE500;
+            color: #000000;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .kakao-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            background: url('https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png') no-repeat center center;
+            background-size: contain;
+        }
+
+        .kakao-login-btn:hover {
+            background-color: #E6CE00;
+        }
+    </style>
+    <!-- 헤더 -->
+    <th:block th:replace="~{include/header::header}"></th:block>
+    <th:block th:replace="~{include/header::preloader}"></th:block>
+    <th:block th:replace="~{include/main_header::main_header}"></th:block>
+</head>
+
+<body>
+
+
+<!-- 로그인 컨테이너 -->
+<div class="login-container">
+    <div class="login-card">
+        <!-- 왼쪽 섹션 -->
+        <div class="login-left">
+            <h3>아직, </h3>
+            <h3>플리마켓 회원이 아니세요?</h3>
+            <p>회원으로 가입하시고 마일리지 혜택을 누려 보세요.</p>
+            <a href="/register" class="btn-register">회원가입</a>
+        </div>
+
+        <!-- 오른쪽 섹션 -->
+        <div class="login-right">
+            <h3>로그인</h3>
+            <form th:action="@{/login}" method="post">
+                <input type="text" class="form-control" placeholder="아이디를 입력하세요" name="userID" required>
+                <input type="password" class="form-control" placeholder="비밀번호를 입력하세요" name="password" required>
+                <button type="submit" class="btn-login">로그인</button>
+                <div class="link-group">
+                    <a href="/findId">아이디 찾기</a> |
+                    <a href="/findPassword">비밀번호 찾기</a>
+                </div>
+                <!-- 기존 SNS 버튼 대신 카카오 로그인 버튼 추가 -->
+                <a href="/oauth2/authorization/kakao" class="kakao-login-btn">
+                    <span class="kakao-icon"></span>
+                    카카오로 시작하기
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="~{include/footer::footer}"></th:block>
+
+<th:block th:replace="~{include/plugin::plugin}"></th:block>
+
+</body>
+
+</html>

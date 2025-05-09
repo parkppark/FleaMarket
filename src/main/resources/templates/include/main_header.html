@@ -1,0 +1,101 @@
+<th:block th:fragment="main_header">
+
+    <!-- Header Section Begin -->
+    <header class="header">
+        <div class="header__top">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 col-md-7">
+                        <div class="header__top__left">
+                            <p>
+                            <span th:if="${#authorization.expression('isAuthenticated()')}" th:with="user=${#authentication.principal}">
+                                <!-- OAuth2 로그인 사용자 -->
+                                <span th:if="${user instanceof T(org.springframework.security.oauth2.core.user.OAuth2User)}"
+                                      th:text="${user.attributes['properties']['nickname'] + '님 환영합니다!'}">
+                                </span>
+                                <!-- 일반 로그인 사용자 -->
+                                <span th:unless="${user instanceof T(org.springframework.security.oauth2.core.user.OAuth2User)}"
+                                      th:with="username=${@userService.findByUserID(#authentication.name).username}"
+                                      th:text="${username + '님 환영합니다!'}">
+                                </span>
+                            </span>
+
+
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-5">
+                        <div class="header__top__right">
+                            <div class="header__top__links">
+
+                                <!-- 로그인/로그아웃 링크 -->
+                                <a th:if="${#authorization.expression('!isAuthenticated()')}" href="/login">Sign in</a>
+                                <a th:if="${#authorization.expression('isAuthenticated()')}" href="/logout">Sign out</a>
+                                <a href="#">FAQs</a>
+                                <a th:if="${#authorization.expression('isAuthenticated()')}" href="/">My Page</a>
+                            </div>
+
+                            <div class="header__top__hover">
+                                <span>Usd <i class="arrow_carrot-down"></i></span>
+                                <ul>
+                                    <li>USD</li>
+                                    <li>EUR</li>
+                                    <li>USD</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-3">
+                    <div class="header__logo">
+                        <a href="/"><img src="img/logo.png" alt=""></a>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <nav class="header__menu mobile-menu">
+                        <ul>
+                            <li th:class="${#strings.equals(#vars.currentPage, 'home')} ? 'active'">
+                                <a href="/">Home</a>
+                            </li>
+                            <li th:class="${#strings.equals(#vars.currentPage, 'shop')} ? 'active'">
+                                <a href="/shop">Buy</a>
+                            </li>
+
+                            <li th:class="${#strings.equals(#vars.currentPage, 'productRegister')} ? 'active'">
+                                <a href="/productRegister">Sell</a>
+                            </li>
+                            <li th:class="${#strings.equals(#vars.currentPage, 'blog')} ? 'active'">
+                                <a href="./blog.html"></a>
+                            </li>
+                            <li th:class="${#strings.equals(#vars.currentPage, 'contact')} ? 'active'">
+                                <a href="./contact.html"></a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-lg-3 col-md-3">
+                    <div class="header__nav__option">
+                        <a href="#" class="search-switch">
+                            <img src="img/icon/search.png" alt="">
+                        </a>
+                        <a href="#">
+                            <img src="img/icon/heart.png" alt="">
+                        </a>
+                        <a href="#" class="cart">
+                            <img src="img/icon/cart.png" alt="">
+                            <span></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="canvas__open"><i class="fa fa-bars"></i></div>
+        </div>
+    </header>
+    <!-- Header Section End -->
+
+
+</th:block>
