@@ -58,7 +58,9 @@ public class SecurityConfig {
                     "/shop/**",
                     "/login/**",
                     "/register/**",
-                    "/error"
+                    "/error",
+                    "/uploads/**"
+
                 ).permitAll()
                 .requestMatchers("/productRegister/**").authenticated()
                 .anyRequest().authenticated()

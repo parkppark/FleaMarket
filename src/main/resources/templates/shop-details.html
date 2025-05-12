@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="~{include/header::header}"></th:block>
+    <th:block th:replace="~{include/header::preloader}"></th:block>
+    <th:block th:replace="~{include/main_header::main_header}"></th:block>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        .breadcrumb-section {
+            padding: 10px 0;
+            background-color: #f5f5f5;
+        }
+        .breadcrumb-option {
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+        }
+        .breadcrumb-option a, .breadcrumb-option span {
+            color: #666;
+            font-size: 14px;
+            margin: 0 5px;
+        }
+        .breadcrumb-option i {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .product-detail-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 15px;
+        }
+
+        .product-detail-top {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .product-images {
+            flex: 0 0 60%;
+            max-width: 60%;
+            position: relative;
+        }
+
+        @media (max-width: 768px) {
+            .product-images, .product-info {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+            .product-detail-top {
+                flex-direction: column;
+            }
+        }
+
+        .product-images img {
+            width: 100%;
+            border-radius: 4px;
+        }
+
+        .product-images .image-counter {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+        }
+
+        .product-images .nav-arrows {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+        }
+
+        .product-images .nav-arrows button {
+            background: rgba(255,255,255,0.7);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .product-info {
+            flex: 0 0 40%;
+            max-width: 40%;
+            padding-left: 30px;
+        }
+
+        .product-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+
+        .product-price {
+            font-size: 28px;
+            font-weight: 700;
+            color: #222;
+            margin-bottom: 15px;
+        }
+
+        .product-price .price-label {
+            font-size: 14px;
+            color: #4caf50;
+            margin-left: 5px;
+        }
+
+        .product-meta {
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .product-meta p {
+            margin: 5px 0;
+        }
+
+        .product-attributes {
+            display: flex;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+            margin-bottom: 20px;
+        }
+
+        .attribute {
+            flex: 1;
+            text-align: center;
+            border-right: 1px solid #eee;
+            padding: 0 10px;
+        }
+
+        .attribute:last-child {
+            border-right: none;
+        }
+
+        .attribute-label {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 5px;
+        }
+
+        .attribute-value {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .product-location {
+            margin-bottom: 15px;
+        }
+
+        .location-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .location-item i {
+            margin-right: 8px;
+            color: #666;
+            width: 16px;
+        }
+
+        .payment-options {
+            margin-bottom: 20px;
+        }
+
+        .payment-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .payment-title i {
+            margin-right: 5px;
+        }
+
+        .payment-detail {
+            font-size: 13px;
+            color: #666;
+            margin-left: 20px;
+            margin-top: 3px;
+        }
+
+        .action-buttons {
+            display: flex;
+            margin-top: 20px;
+        }
+
+        .action-buttons button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .wishlist-btn {
+            background: none;
+            border: 1px solid #ddd !important;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wishlist-btn i {
+            margin-right: 5px;
+        }
+
+        .chat-btn {
+            background: #222;
+            color: white;
+            margin-right: 10px;
+        }
+
+        .buy-btn {
+            background: #000;
+            color: white;
+        }
+
+        .accordion {
+            margin-top: 30px;
+        }
+
+        .accordion-item {
+            border-bottom: 1px solid #eee;
+        }
+
+        .accordion-header {
+            padding: 15px 0;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .accordion-header i {
+            transition: transform 0.3s;
+        }
+
+        .accordion-header.active i {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            padding-bottom: 15px;
+            display: none;
+        }
+
+        .accordion-content.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- Product Detail Section Begin -->
+<section class="product-detail-container">
+    <div class="product-detail-top">
+        <!-- Product Images -->
+        <div class="product-images">
+            <img th:src="@{'/uploads/' + ${product.p_imageUrl}}" alt="" src="/api/placeholder/600/450" />
+
+        </div>
+
+        <!-- Product Info -->
+        <div class="product-info">
+            <h1 class="product-title" th:text="${product.p_name}"></h1>
+            <div class="product-price">
+                <span th:text="${#numbers.formatCurrency(product.p_price)}"></span>
+                <span class="price-label">안전거래</span>
+            </div>
+
+            <div class="product-meta">
+                <p><strong></strong> <span th:text="${#temporals.format(product.createDate, 'yyyy-MM-dd HH:mm')}"></span></p>
+
+            </div>
+
+            <div class="product-attributes">
+                <div class="attribute">
+                    <div class="attribute-label">제품상태</div>
+                    <div class="attribute-value" th:text="${product.p_status}">중고</div>
+                </div>
+                <div class="attribute">
+                    <div class="attribute-label">거래방식</div>
+                    <div class="attribute-value">직거래, 택배</div>
+                </div>
+                <div class="attribute">
+                    <div class="attribute-label">배송비</div>
+                    <div class="attribute-value">별도</div>
+                </div>
+
+            </div>
+
+            <div class="product-location">
+                    <p><strong>판매자:</strong> <span th:text="${product.user.userID}"></span></p>
+            </div>
+
+            <div class="payment-options">
+                <strong>상품 정보</strong>
+                <p th:text="${product.p_content}"></p>
+
+
+            </div>
+
+            <div class="action-buttons">
+                <button class="wishlist-btn">
+                    <i class="fa fa-heart-o"></i>
+                </button>
+                <button class="chat-btn">채팅하기</button>
+                <button class="buy-btn">구매하기</button>
+            </div>
+        </div>
+    </div>
+
+</section>
+<!-- Product Detail Section End -->
+
+<th:block th:replace="~{include/footer::footer}"></th:block>
+<th:block th:replace="~{include/plugin::plugin}"></th:block>
+
+<script>
+    $(document).ready(function () {
+        // Set background images
+        $('.set-bg').each(function () {
+            var bg = $(this).data('setbg');
+            $(this).css('background-image', 'url(' + bg + ')');
+        });
+
+        // Accordion functionality
+        $('.accordion-header').click(function() {
+            $(this).toggleClass('active');
+            $(this).next('.accordion-content').toggleClass('active');
+        });
+
+        // Image navigation
+        let currentImage = 1;
+        const totalImages = 4;
+
+        $('.next-btn').click(function() {
+            currentImage = currentImage >= totalImages ? 1 : currentImage + 1;
+            updateImageCounter();
+        });
+
+        $('.prev-btn').click(function() {
+            currentImage = currentImage <= 1 ? totalImages : currentImage - 1;
+            updateImageCounter();
+        });
+
+        function updateImageCounter() {
+            $('.image-counter').text(currentImage + '/' + totalImages);
+        }
+    });
+</script>
+</body>
+</html>
