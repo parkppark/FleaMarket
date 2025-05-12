@@ -32,7 +32,7 @@
                                 <a th:if="${#authorization.expression('!isAuthenticated()')}" href="/login">Sign in</a>
                                 <a th:if="${#authorization.expression('isAuthenticated()')}" href="/logout">Sign out</a>
                                 <a href="#">FAQs</a>
-                                <a th:if="${#authorization.expression('isAuthenticated()')}" href="/">My Page</a>
+                                <a th:if="${#authorization.expression('isAuthenticated()')}" href="/myPage">My Page</a>
                             </div>
 
                             <div class="header__top__hover">

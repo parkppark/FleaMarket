@@ -62,7 +62,8 @@ public class SecurityConfig {
                     "/uploads/**"
 
                 ).permitAll()
-                .requestMatchers("/productRegister/**").authenticated()
+                .requestMatchers("/productRegister/**","/myPage",
+                        "/myPage/**").authenticated()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form

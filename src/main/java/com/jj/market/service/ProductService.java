@@ -92,5 +92,7 @@ public class ProductService {
         return productRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. ID: " + id));
     }
 
-
+    public List<Product> getProductsByUserID(String userID) {
+        return productRepository.findByUserUserID(userID);
+    }
 }

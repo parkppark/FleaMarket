@@ -21,6 +21,10 @@ import com.jj.market.dto.KakaoUserInfo;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @Service
 @RequiredArgsConstructor
@@ -43,8 +47,12 @@ public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2Authentic
 
         saveOrUpdate(id, nickname, email);
 
+        // 기본 사용자 권한 설정
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+
         return new DefaultOAuth2User(
-            Collections.emptyList(),
+            authorities,  // 빈 리스트 대신 권한이 포함된 리스트 사용
             attributes,
             "id"
         );

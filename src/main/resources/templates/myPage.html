@@ -5,6 +5,10 @@
     <th:block th:replace="~{include/header::header}"></th:block>
     <th:block th:replace="~{include/header::preloader}"></th:block>
     <th:block th:replace="~{include/main_header::main_header}"></th:block>
+
+
+
+
 </head>
 
 <body>
@@ -16,10 +20,10 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="breadcrumb__text">
-                        <h4>Shop</h4>
+                        <h4>My Page</h4>
                         <div class="breadcrumb__links">
                             <a href="/">Home</a>
-                            <span>Shop</span>
+                            <span>My Page</span>
                         </div>
                     </div>
                 </div>
@@ -50,36 +54,15 @@
                                         <div class="card-body">
                                             <div class="shop__sidebar__categories">
                                                 <ul class="nice-scroll">
-                                                    <li><a href="#">전자기기 (20)</a></li>
-                                                    <li><a href="#">의류 (20)</a></li>
-                                                    <li><a href="#">도서 (20)</a></li>
-                                                    <li><a href="#">가구/인테리어 (20)</a></li>
-                                                    <li><a href="#">기타 (20)</a></li>
-                                                                                                    </ul>
+                                                    <li><a href="#">판매 중인 상품</a></li>
+                                                    <li><a href="#">판매 완료</a></li>
+                                                    <li><a href="#">찜목록</a></li>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="card">
-                                    <div class="card-heading">
-                                        <a data-toggle="collapse" data-target="#collapseThree">Filter Price</a>
-                                    </div>
-                                    <div id="collapseThree" class="collapse show" data-parent="#accordionExample">
-                                        <div class="card-body">
-                                            <div class="shop__sidebar__price">
-                                                <ul>
-                                                    <li><a href="#">₩0 - ₩10,000</a></li>
-                                                    <li><a href="#">₩10,000 - ₩50,000</a></li>
-                                                    <li><a href="#">₩50,000 - ₩100,000</a></li>
-                                                    <li><a href="#">₩100,000 - ₩200,000</a></li>
-                                                    <li><a href="#">₩200,000 - ₩1,000,000</a></li>
-                                                    <li><a href="#">₩1,000,000+</a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -108,46 +91,31 @@
                     <section class="product spad">
                         <div class="container">
                             <div class="row">
-                                <!-- Thymeleaf를 사용한 상품 반복 표시 -->
+                                <!-- 상품이 없을 경우 메시지 표시 -->
+                                <div class="col-12" th:if="${#lists.isEmpty(products)}">
+                                    <div class="alert alert-info" role="alert">
+                                        등록된 상품이 없습니다.
+                                    </div>
+                                </div>
+
+                                <!-- 상품 목록 표시 -->
                                 <div class="col-lg-4 col-md-6 col-sm-6" th:each="product : ${products}">
                                     <div class="product__item">
-                                        <div class="product__item__pic set-bg" th:attr="data-setbg=${'/uploads/' + product.p_imageUrl}">
+                                        <div class="product__item__pic set-bg"
+                                             th:attr="data-setbg=${'/uploads/' + product.p_imageUrl}">
                                             <ul class="product__hover">
-                                                <li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
-                                                <li><a href="#"><img src="img/icon/compare.png" alt=""> <span>Compare</span></a>
-                                                </li>
-                                                <li><a th:href="@{/shop/detail/{id}(id=${product.p_id})}"><img src="img/icon/search.png" alt=""></a></li>
+                                                <li><a href="#"><img th:src="@{/img/icon/heart.png}" alt=""></a></li>
+                                                <li><a href="#"><img th:src="@{/img/icon/compare.png}" alt="">
+                                                    <span>Compare</span></a></li>
+                                                <li><a th:href="@{/shop/detail/{id}(id=${product.p_id})}">
+                                                    <img th:src="@{/img/icon/search.png}" alt=""></a></li>
                                             </ul>
                                         </div>
                                         <div class="product__item__text">
-                                            <h6 th:text="${product.p_name}">상품명</h6>
-                                            <a href="#" class="add-cart">+ Add To Cart</a>
-                                            <h6 th:text="${username}"></h6>
-                                            <div class="seller-info" style="margin: 5px 0; font-size: 0.9em; color: #666;">
-                                                <span></span>
-                                                <span th:text="${product.user.userID}">판매자명</span>
-                                            </div>
 
+                                            <h6 th:text="${product.p_name}"></h6>
 
-                                            <div class="rating">
-                                                <i class="fa fa-star-o"></i>
-                                                <i class="fa fa-star-o"></i>
-                                                <i class="fa fa-star-o"></i>
-                                                <i class="fa fa-star-o"></i>
-                                                <i class="fa fa-star-o"></i>
-                                            </div>
                                             <h5 th:text="${#numbers.formatCurrency(product.p_price)}">가격</h5>
-                                            <div class="product__color__select">
-                                                <label for="pc-4">
-                                                    <input type="radio" id="pc-4">
-                                                </label>
-                                                <label class="active black" for="pc-5">
-                                                    <input type="radio" id="pc-5">
-                                                </label>
-                                                <label class="grey" for="pc-6">
-                                                    <input type="radio" id="pc-6">
-                                                </label>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>

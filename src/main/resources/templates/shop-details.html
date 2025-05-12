@@ -301,7 +301,15 @@
             <div class="product-attributes">
                 <div class="attribute">
                     <div class="attribute-label">제품상태</div>
-                    <div class="attribute-value" th:text="${product.p_status}">중고</div>
+                    <div class="attribute-value">
+                        <span th:switch="${product.p_status}">
+                            <span th:case="'like-new'">거의 새 것</span>
+                            <span th:case="'used'">중고</span>
+                            <span th:case="'new'">새상품</span>
+                            <span th:case="*" th:text="${product.p_status}"></span>
+                        </span>
+                    </div>
+
                 </div>
                 <div class="attribute">
                     <div class="attribute-label">거래방식</div>
