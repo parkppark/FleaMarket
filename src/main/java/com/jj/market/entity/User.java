@@ -28,6 +28,6 @@ public class User {
     private String sex;
     
     // OAuth2 관련 필드 추가
-    private String provider;    // 인증 제공자 (ex: "KAKAO")
-    private String providerId;  // 인증 제공자에서의 ID
+    private String provider;
+    private String providerId;
 }

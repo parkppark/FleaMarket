@@ -340,6 +340,7 @@
                 <button class="chat-btn">채팅하기</button>
                 <button class="buy-btn">구매하기</button>
             </div>
+                <button class="buy-btn">수정</button>
         </div>
     </div>
 
@@ -351,19 +352,16 @@
 
 <script>
     $(document).ready(function () {
-        // Set background images
         $('.set-bg').each(function () {
             var bg = $(this).data('setbg');
             $(this).css('background-image', 'url(' + bg + ')');
         });
 
-        // Accordion functionality
         $('.accordion-header').click(function() {
             $(this).toggleClass('active');
             $(this).next('.accordion-content').toggleClass('active');
         });
 
-        // Image navigation
         let currentImage = 1;
         const totalImages = 4;
 

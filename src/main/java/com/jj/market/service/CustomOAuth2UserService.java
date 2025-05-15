@@ -52,7 +52,7 @@ public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2Authentic
         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 
         return new DefaultOAuth2User(
-            authorities,  // 빈 리스트 대신 권한이 포함된 리스트 사용
+            authorities,
             attributes,
             "id"
         );
