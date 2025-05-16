@@ -12,12 +12,14 @@ import com.jj.market.service.ProductService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.PathVariable;
+import com.jj.market.entity.Product;
+import org.springframework.security.access.AccessDeniedException;
 
 @Controller
 @RequiredArgsConstructor
 @Slf4j
 public class ProductController {
-
     private final ProductService productService;
 
     @PreAuthorize("isAuthenticated()")
@@ -78,5 +80,41 @@ public class ProductController {
             log.error("상품 등록 실패: {}", e.getMessage(), e);
             return "redirect:/productRegister?error=true";
         }
+    }
+
+    @GetMapping("/product/modify/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String showModifyForm(@PathVariable Long id, Model model, Authentication authentication) {
+        Product product = productService.getProductById(id);
+        
+        // 현재 로그인한 사용자가 작성자인지 확인
+        if (!product.getUser().getUserID().equals(authentication.getName())) {
+            throw new AccessDeniedException("수정 권한이 없습니다.");
+        }
+        
+        model.addAttribute("product", product);
+        return "productModify";
+    }
+
+    @PostMapping("/product/modify/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String modifyProduct(@PathVariable Long id,
+                              @RequestParam("p_name") String productName,
+                              @RequestParam("p_category") String category,
+                              @RequestParam("p_price") double price,
+                              @RequestParam("p_status") String status,
+                              @RequestParam("p_content") String content,
+                              @RequestParam(value = "p_imageUrl", required = false) MultipartFile[] files,
+                              Authentication authentication) {
+        
+        productService.modifyProduct(id, productName, category, price, status, content, files, authentication.getName());
+        return "redirect:/shop/detail/" + id;
+    }
+
+    @PostMapping("/product/delete/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String deleteProduct(@PathVariable Long id, Authentication authentication) {
+        productService.deleteProduct(id, authentication.getName());
+        return "redirect:/shop";
     }
 }

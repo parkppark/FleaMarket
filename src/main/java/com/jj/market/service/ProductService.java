@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.security.access.AccessDeniedException;
 
 @Service
 @RequiredArgsConstructor
@@ -94,5 +95,68 @@ public class ProductService {
 
     public List<Product> getProductsByUserID(String userID) {
         return productRepository.findByUserUserID(userID);
+    }
+
+    @Transactional
+    public void modifyProduct(Long id, String productName, String category, 
+                            double price, String status, String content,
+                            MultipartFile[] files, String userID) {
+        Product product = getProductById(id);
+        
+        // 권한 확인
+        if (!product.getUser().getUserID().equals(userID)) {
+            throw new AccessDeniedException("수정 권한이 없습니다.");
+        }
+
+        // 이미지 처리
+        if (files != null && files.length > 0 && !files[0].isEmpty()) {
+            try {
+                List<String> imageUrls = new ArrayList<>();
+                Path uploadPath = Path.of(uploadDirectory);
+                
+                for (MultipartFile file : files) {
+                    String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+                    Files.copy(file.getInputStream(), uploadPath.resolve(fileName), 
+                             StandardCopyOption.REPLACE_EXISTING);
+                    imageUrls.add(fileName);
+                }
+                product.setP_imageUrl(String.join(",", imageUrls));
+            } catch (IOException e) {
+                throw new RuntimeException("이미지 업로드 실패", e);
+            }
+        }
+
+        // 정보 업데이트
+        product.setP_name(productName);
+        product.setP_category(category);
+        product.setP_price(price);
+        product.setP_status(status);
+        product.setP_content(content);
+        
+        productRepository.save(product);
+    }
+
+    @Transactional
+    public void deleteProduct(Long id, String userID) {
+        Product product = getProductById(id);
+        
+        // 권한 확인
+        if (!product.getUser().getUserID().equals(userID)) {
+            throw new AccessDeniedException("삭제 권한이 없습니다.");
+        }
+
+        // 이미지 파일 삭제
+        if (product.getP_imageUrl() != null) {
+            String[] imageUrls = product.getP_imageUrl().split(",");
+            for (String imageUrl : imageUrls) {
+                try {
+                    Files.deleteIfExists(Path.of(uploadDirectory, imageUrl));
+                } catch (IOException e) {
+                    log.error("이미지 파일 삭제 실패: {}", imageUrl, e);
+                }
+            }
+        }
+
+        productRepository.delete(product);
     }
 }
