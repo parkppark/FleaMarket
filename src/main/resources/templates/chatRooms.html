@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{include/header::header}"></th:block>
+    <style>
+        .chat-room-list {
+            max-width: 800px;
+            margin: 30px auto;
+        }
+        .chat-room-item {
+            display: flex;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            align-items: center;
+        }
+        .product-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        .chat-info {
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body>
+    <th:block th:replace="~{include/main_header::main_header}"></th:block>
+    
+    <div class="chat-room-list">
+        <h2>채팅 목록</h2>
+        <div th:each="room : ${chatRooms}" class="chat-room-item">
+            <img th:src="@{'/uploads/' + ${room.product.p_imageUrl}}" 
+                 class="product-image" alt="상품 이미지">
+            <div class="chat-info">
+                <h4 th:text="${room.product.p_name}">상품명</h4>
+                <p>판매자: <span th:text="${room.seller.nickname}"></span></p>
+                <p>가격: <span th:text="${#numbers.formatDecimal(room.product.p_price, 0, 'COMMA', 0, 'POINT')}">0</span>원</p>
+            </div>
+            <a th:href="@{'/chat/' + ${room.roomId}}" class="site-btn">채팅하기</a>
+        </div>
+    </div>
+
+    <th:block th:replace="~{include/footer::footer}"></th:block>
+</body>
+</html>

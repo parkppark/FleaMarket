@@ -126,7 +126,7 @@ public class ProductService {
             }
         }
 
-        // 정보 업데이트
+
         product.setP_name(productName);
         product.setP_category(category);
         product.setP_price(price);

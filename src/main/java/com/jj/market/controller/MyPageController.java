@@ -39,7 +39,7 @@ public class MyPageController {
                 // OAuth2 로그인의 경우
                 OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
                 Object idObj = oauth2User.getAttribute("id");
-                userID = idObj != null ? idObj.toString() : "";  // kakao_ 접두사 제거
+                userID = idObj != null ? idObj.toString() : "";
                 log.info("카카오 로그인 provider_id: {}", userID);
                 log.info("카카오 OAuth2User 속성들: {}", oauth2User.getAttributes());
             } else {
@@ -53,7 +53,7 @@ public class MyPageController {
                 User user = userService.getCurrentUser(userID);
                 log.info("조회된 사용자 정보: {}", user);
             
-                // 현재 로그인한 사용자의 상품 목록을 가져옴
+
                 List<Product> userProducts = productService.getProductsByUserID(user.getUserID());  // 실제 userID 사용
                 log.info("조회된 상품 개수: {}", userProducts.size());
             

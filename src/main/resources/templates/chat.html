@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>채팅방</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="chat-messages"></div>
+        <input type="text" id="message" placeholder="메시지를 입력하세요...">
+        <button onclick="sendMessage()">전송</button>
+    </div>
+
+    <script th:inline="javascript">
+        const roomId = [[${roomId}]];
+        const username = [[${#authentication.name}]];
+        let stompClient = null;
+
+        function connect() {
+            const socket = new SockJS('/ws');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function(frame) {
+                console.log('Connected: ' + frame);
+                stompClient.subscribe('/topic/chat/' + roomId, function(message) {
+                    showMessage(JSON.parse(message.body));
+                });
+            });
+        }
+
+        function sendMessage() {
+            const messageInput = document.getElementById('message');
+            const messageContent = messageInput.value.trim();
+            
+            if (messageContent && stompClient) {
+                const chatMessage = {
+                    type: 'TALK',
+                    roomId: roomId,
+                    sender: username,
+                    message: messageContent
+                };
+                stompClient.send("/app/chat/send", {}, JSON.stringify(chatMessage));
+                messageInput.value = '';
+            }
+        }
+
+        function showMessage(message) {
+            const messageElement = document.createElement('div');
+            messageElement.textContent = `${message.sender}: ${message.message}`;
+            document.getElementById('chat-messages').appendChild(messageElement);
+        }
+
+        connect();
+    </script>
+</body>
+</html>

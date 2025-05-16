@@ -24,7 +24,7 @@ import org.springframework.security.core.session.SessionRegistryImpl;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true)  // 이 부분 추가
+@EnableMethodSecurity(prePostEnabled = true)
 @Slf4j
 public class SecurityConfig {
 
@@ -59,11 +59,14 @@ public class SecurityConfig {
                     "/login/**",
                     "/register/**",
                     "/error",
-                    "/uploads/**"
+                    "/uploads/**",
+                    "/ws/**",
+                    "/topic/**",
+                    "/app/**"
 
                 ).permitAll()
                 .requestMatchers("/productRegister/**","/myPage",
-                        "/myPage/**").authenticated()
+                        "/myPage/**", "/chat/**").authenticated()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
@@ -71,7 +74,6 @@ public class SecurityConfig {
                 .usernameParameter("userID")
                 .passwordParameter("password")
                 .successHandler((request, response, authentication) -> {
-                    // 세션에 명시적으로 인증 정보 저장
                     HttpSession session = request.getSession(true);
                     session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
                     
@@ -123,11 +125,10 @@ public class SecurityConfig {
                 .deleteCookies("JSESSIONID")
                 .permitAll()
             )
-            // 나머지 설정 유지...
             .sessionManagement(session -> session
                 .maximumSessions(1)
                 .expiredUrl("/login?expired")
-                .sessionRegistry(sessionRegistry()) // 추가
+                .sessionRegistry(sessionRegistry())
             );
 
         return http.build();

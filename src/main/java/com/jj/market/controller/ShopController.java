@@ -40,33 +40,32 @@ public String showProductDetail(@PathVariable Long id, Model model) {
     model.addAttribute("currentPage", "shop");
     
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    boolean isOwner = false;
+    
     if (authentication != null && authentication.isAuthenticated() && 
         !"anonymousUser".equals(authentication.getPrincipal())) {
         
+        String currentUserId;
         Object principal = authentication.getPrincipal();
-        String userIdentifier = null;
         
         if (principal instanceof DefaultOAuth2User) {
+            // 카카오 로그인의 경우
             DefaultOAuth2User oauth2User = (DefaultOAuth2User) principal;
             Map<String, Object> attributes = oauth2User.getAttributes();
             Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
-            userIdentifier = (String) kakaoAccount.get("email");
+            currentUserId = kakaoAccount.get("email").toString();
+            // 이메일로 비교
+            isOwner = product.getUser().getEmail().equals(currentUserId);
         } else {
-            userIdentifier = authentication.getName();
+            // 일반 로그인의 경우
+            currentUserId = authentication.getName();
+            // userID로 비교
+            isOwner = product.getUser().getUserID().equals(currentUserId);
         }
-        
-        boolean isOwner = false;
-        if (product.getUser() != null) {
-            isOwner = product.getUser().getEmail().equals(userIdentifier) || 
-                     product.getUser().getUserID().equals(userIdentifier);
-        }
-        
-        model.addAttribute("isAuthenticated", true);
-        model.addAttribute("isOwner", isOwner);
-    } else {
-        model.addAttribute("isAuthenticated", false);
-        model.addAttribute("isOwner", false);
     }
+    
+    model.addAttribute("isAuthenticated", authentication != null && authentication.isAuthenticated());
+    model.addAttribute("isOwner", isOwner);
     
     return "shop-details";
 }

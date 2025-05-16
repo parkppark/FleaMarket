@@ -15,6 +15,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PathVariable;
 import com.jj.market.entity.Product;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -88,8 +90,26 @@ public class ProductController {
         Product product = productService.getProductById(id);
         
         // 현재 로그인한 사용자가 작성자인지 확인
-        if (!product.getUser().getUserID().equals(authentication.getName())) {
-            throw new AccessDeniedException("수정 권한이 없습니다.");
+        String currentUserId;
+        Object principal = authentication.getPrincipal();
+        
+        if (principal instanceof DefaultOAuth2User) {
+            // 카카오 로그인의 경우
+            DefaultOAuth2User oauth2User = (DefaultOAuth2User) principal;
+            Map<String, Object> attributes = oauth2User.getAttributes();
+            Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+            currentUserId = kakaoAccount.get("email").toString();
+            // 이메일로 비교
+            if (!product.getUser().getEmail().equals(currentUserId)) {
+                throw new AccessDeniedException("수정 권한이 없습니다.");
+            }
+        } else {
+            // 일반 로그인의 경우
+            currentUserId = authentication.getName();
+            // userID로 비교
+            if (!product.getUser().getUserID().equals(currentUserId)) {
+                throw new AccessDeniedException("수정 권한이 없습니다.");
+            }
         }
         
         model.addAttribute("product", product);
@@ -107,14 +127,59 @@ public class ProductController {
                               @RequestParam(value = "p_imageUrl", required = false) MultipartFile[] files,
                               Authentication authentication) {
         
-        productService.modifyProduct(id, productName, category, price, status, content, files, authentication.getName());
+        Product product = productService.getProductById(id);
+        
+
+        String currentUserId;
+        Object principal = authentication.getPrincipal();
+        
+        if (principal instanceof DefaultOAuth2User) {
+
+            DefaultOAuth2User oauth2User = (DefaultOAuth2User) principal;
+            Map<String, Object> attributes = oauth2User.getAttributes();
+            Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+            currentUserId = kakaoAccount.get("email").toString();
+
+            if (!product.getUser().getEmail().equals(currentUserId)) {
+                throw new AccessDeniedException("수정 권한이 없습니다.");
+            }
+        } else {
+
+            currentUserId = authentication.getName();
+
+            if (!product.getUser().getUserID().equals(currentUserId)) {
+                throw new AccessDeniedException("수정 권한이 없습니다.");
+            }
+        }
+        
+        productService.modifyProduct(id, productName, category, price, status, content, files, currentUserId);
         return "redirect:/shop/detail/" + id;
     }
 
     @PostMapping("/product/delete/{id}")
     @PreAuthorize("isAuthenticated()")
     public String deleteProduct(@PathVariable Long id, Authentication authentication) {
-        productService.deleteProduct(id, authentication.getName());
+        Product product = productService.getProductById(id);
+        
+        String currentUserId;
+        Object principal = authentication.getPrincipal();
+        
+        if (principal instanceof DefaultOAuth2User) {
+            DefaultOAuth2User oauth2User = (DefaultOAuth2User) principal;
+            Map<String, Object> attributes = oauth2User.getAttributes();
+            Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+            currentUserId = kakaoAccount.get("email").toString();
+            if (!product.getUser().getEmail().equals(currentUserId)) {
+                throw new AccessDeniedException("삭제 권한이 없습니다.");
+            }
+        } else {
+            currentUserId = authentication.getName();
+            if (!product.getUser().getUserID().equals(currentUserId)) {
+                throw new AccessDeniedException("삭제 권한이 없습니다.");
+            }
+        }
+        
+        productService.deleteProduct(id, currentUserId);
         return "redirect:/shop";
     }
 }
