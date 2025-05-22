@@ -134,7 +134,7 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // 세션 관리를 위한 빈 추가
+
     @Bean
     public SessionRegistry sessionRegistry() {
         return new SessionRegistryImpl();

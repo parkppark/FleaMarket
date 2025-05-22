@@ -30,7 +30,7 @@ public class ChatService {
         User buyer = userService.findByUserID(buyerId);
         Product product = productService.getProductById(productId);
         
-        // 이미 존재하는 채팅방 확인
+
         Optional<ChatRoom> existingRoom = chatRoomRepository
             .findByProductAndBuyerAndSeller(product, buyer, seller);
         
