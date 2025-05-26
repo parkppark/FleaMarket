@@ -41,7 +41,6 @@ public class ProductController {
                                @RequestParam("p_content") String content,
                                Authentication authentication) {
         try {
-            // 모든 요청 매개변수 로깅
             log.info("요청 매개변수 확인:");
             log.info("p_name: {}", productName);
             log.info("p_category: {}", category);
@@ -89,7 +88,6 @@ public class ProductController {
     public String showModifyForm(@PathVariable Long id, Model model, Authentication authentication) {
         Product product = productService.getProductById(id);
         
-        // 현재 로그인한 사용자가 작성자인지 확인
         String currentUserId;
         Object principal = authentication.getPrincipal();
         

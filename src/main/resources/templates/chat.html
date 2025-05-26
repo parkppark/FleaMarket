@@ -1,16 +1,21 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <th:block th:replace="~{include/header::header}"></th:block>
+    <th:block th:replace="~{include/header::preloader}"></th:block>
+    <th:block th:replace="~{include/main_header::main_header}"></th:block>
     <title>채팅방</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 </head>
 <body>
-    <div id="chat-container">
-        <div id="chat-messages"></div>
+<div id="chat-container">
+    <div id="chat-messages"></div>
+    <div id="chat-input">
         <input type="text" id="message" placeholder="메시지를 입력하세요...">
-        <button onclick="sendMessage()">전송</button>
+        <button id="send-button" onclick="sendMessage()">전송</button>
     </div>
+</div>
 
     <script th:inline="javascript">
         const roomId = [[${roomId}]];
@@ -20,18 +25,27 @@
         function connect() {
             const socket = new SockJS('/ws');
             stompClient = Stomp.over(socket);
+
             stompClient.connect({}, function(frame) {
                 console.log('Connected: ' + frame);
-                stompClient.subscribe('/topic/chat/' + roomId, function(message) {
+
+
+                stompClient.subscribe('/user/queue/messages', function(message) {
                     showMessage(JSON.parse(message.body));
                 });
+
+
+                showSystemMessage("채팅방에 연결되었습니다.");
+            }, function(error) {
+                console.error('연결 에러:', error);
+                setTimeout(connect, 5000); // 재연결 시도
             });
         }
 
         function sendMessage() {
             const messageInput = document.getElementById('message');
             const messageContent = messageInput.value.trim();
-            
+
             if (messageContent && stompClient) {
                 const chatMessage = {
                     type: 'TALK',
@@ -39,18 +53,137 @@
                     sender: username,
                     message: messageContent
                 };
+
                 stompClient.send("/app/chat/send", {}, JSON.stringify(chatMessage));
+
+
+                showMessage({
+                    sender: username,
+                    message: messageContent,
+                    timestamp: new Date()
+                });
+
                 messageInput.value = '';
             }
         }
 
         function showMessage(message) {
+            const chatMessages = document.getElementById('chat-messages');
+
+
             const messageElement = document.createElement('div');
+            messageElement.className = message.sender === username ? 'my-message' : 'other-message';
             messageElement.textContent = `${message.sender}: ${message.message}`;
+            chatMessages.appendChild(messageElement);
+
+
+            const isScrolledToBottom =
+                Math.abs(chatMessages.scrollHeight - chatMessages.clientHeight - chatMessages.scrollTop) <= 1;
+
+
+            if (isScrolledToBottom) {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+
+
+        function showSystemMessage(message) {
+            const messageElement = document.createElement('div');
+            messageElement.className = 'system-message';
+            messageElement.textContent = message;
             document.getElementById('chat-messages').appendChild(messageElement);
         }
 
+        // Enter 키로 메시지 전송
+        document.getElementById('message').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
         connect();
     </script>
+
+    <style>
+        #chat-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        #chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #chat-input {
+            margin: 20px auto;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        #send-button {
+            padding: 10px 15px;
+            background-color: #2d3030;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #send-button:hover {
+            background-color: #0056b3;
+        }
+
+        .my-message {
+            text-align: right;
+            margin: 5px;
+            padding: 8px 12px;
+            background-color: #101010;
+            color: white;
+            border-radius: 10px;
+            display: inline-block;
+            max-width: 75%;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            align-self: flex-end;
+        }
+
+        .other-message {
+            text-align: left;
+            margin: 5px;
+            padding: 8px 12px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            display: inline-block;
+            max-width: 75%;
+            min-width: 50px;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+
+        .system-message {
+            text-align: center;
+            color: #666;
+            margin: 5px;
+            font-style: italic;
+        }
+    </style>
+    <th:block th:replace="~{include/footer::footer}"></th:block>
+    <th:block th:replace="~{include/plugin::plugin}"></th:block>
 </body>
 </html>

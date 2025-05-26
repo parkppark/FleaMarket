@@ -62,7 +62,8 @@ public class SecurityConfig {
                     "/uploads/**",
                     "/ws/**",
                     "/topic/**",
-                    "/app/**"
+                    "/app/**",
+                    "/user/**"
 
                 ).permitAll()
                 .requestMatchers("/productRegister/**","/myPage",
@@ -76,7 +77,7 @@ public class SecurityConfig {
                 .successHandler((request, response, authentication) -> {
                     HttpSession session = request.getSession(true);
                     session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
-                    
+
                     log.info("Login Success. Authentication: {}", authentication);
                     log.info("Principal: {}", authentication.getPrincipal());
                     response.sendRedirect("/");
